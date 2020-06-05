@@ -20,7 +20,9 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
+      console.log('there is debug for yuele', config.headers['X-Token'])
     }
+    console.log('there is cofig :', config)
     return config
   },
   error => {

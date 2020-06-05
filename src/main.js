@@ -15,6 +15,11 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+// added by yuele for console log
+import Vconsole from 'vconsole'
+const vConsole = new Vconsole()
+export default vConsole
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -31,6 +36,7 @@ if (process.env.NODE_ENV === 'production') {
 */
 const { mockXHR } = require('../mock')
 mockXHR()
+console.log('File : src/main.js flag1', mockXHR)
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

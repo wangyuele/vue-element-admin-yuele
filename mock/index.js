@@ -6,11 +6,15 @@ import table from './table'
 
 // yuele add test for role
 import role from './role'
+import article from './article'
+import search from './remote-search'
 
 const mocks = [
   ...user,
   ...role,
-  ...table
+  ...table,
+  ...article,
+  ...search
 ]
 
 // for front mock
@@ -53,7 +57,8 @@ export function mockXHR() {
     Mock.mock(new RegExp(i.url), i.type || 'get', XHR2ExpressReqWrap(i.response))
   }
 }
-
+export default mocks
+/*
 // for mock server
 const responseFake = (url, type, respond) => {
   return {
@@ -69,4 +74,4 @@ const responseFake = (url, type, respond) => {
 export default mocks.map(route => {
   return responseFake(route.url, route.type, route.response)
 })
-
+*/

@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import ipdbRouter from './modules/ipdb'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -219,6 +220,9 @@ export const asyncRoutes = [
       }
     ]
   },
+
+  // added by yuele for ipdb
+  ipdbRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
