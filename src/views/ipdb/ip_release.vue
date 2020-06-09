@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.title" placeholder="Project" style="width: 90px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.type" placeholder="IP_Version" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
@@ -45,54 +45,99 @@
           <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Title" min-width="150px">
+      <el-table-column label="Project" min-width="110px">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110px" align="center">
+      <el-table-column label="Sub_sys" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.subsys }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="TOP_Module" min-width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.top_module }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="TAG" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.tag }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="FileList" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.filelist }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="IUS" width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
+      <el-table-column label="DefineChk" width="110px" align="center">
         <template slot-scope="{row}">
-          <span style="color:red;">{{ row.reviewer }}</span>
+          <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Imp" width="80px">
+      <el-table-column label="ParamsChk" width="110px" align="center">
         <template slot-scope="{row}">
-          <svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />
+          <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Readings" align="center" width="95">
+      <el-table-column label="SpyLint" width="110px" align="center">
         <template slot-scope="{row}">
-          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
-          <span v-else>0</span>
+          <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" class-name="status-col" width="100">
+      <el-table-column label="Lop" width="110px" align="center">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
+          <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
-          </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            Publish
-          </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
-          </el-button>
+      <el-table-column label="SpySdc" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="SpyCdc" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="SpyDft" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="CLP" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ETC" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ERC" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="MTBF" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Latest_Goodcode" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Owner" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -152,6 +197,8 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
+console.log('Time : 06-08 fetchList is :', fetchList)
+
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
   { key: 'US', display_name: 'USA' },
@@ -194,6 +241,7 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
+        timestamp: '+id',
         sort: '+id'
       },
       importanceOptions: [1, 2, 3],
@@ -371,8 +419,8 @@ export default {
       }))
     },
     getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
+      const time_sort = this.listQuery.timestamp
+      return time_sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }

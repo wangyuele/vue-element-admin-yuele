@@ -10,9 +10,13 @@ for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
     timestamp: +Mock.Random.date('T'),
-    author: '@first',
+    author: 'yuele.wang',
     reviewer: '@first',
-    title: '@title(5, 10)',
+    title: ('SharkL6', 'SharkL6Pro'),
+    subsys: 'ap_sys',
+    top_module: 'apcpu_top_pwr_wrap',
+    tag: 'DE_ap_sys_0075_comp_goodcode',
+    filelist: 'Dup:1 P0:2 P1:3',
     content_short: 'mock data',
     content: baseContent,
     forecast: '@float(0, 100, 2, 2)',
@@ -32,6 +36,7 @@ export default [
     url: '/vue-element-admin/article/list',
     type: 'get',
     response: config => {
+      console.log('Time: 06-08 config.query is :', config.query)
       const { importance, type, title, page = 1, limit = 20, sort } = config.query
 
       let mockList = List.filter(item => {
