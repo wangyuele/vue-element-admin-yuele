@@ -10,11 +10,11 @@ for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
     timestamp: +Mock.Random.date('T'),
-    author: 'yuele.wang',
+    owner: 'yuele.wang',
     reviewer: '@first',
     title: ('SharkL6', 'SharkL6Pro'),
     subsys: 'ap_sys',
-    top_module: 'apcpu_top_pwr_wrap',
+    topmodule: 'apcpu_top_pwr_wrap',
     tag: 'DE_ap_sys_0075_comp_goodcode',
     filelist: 'Dup:1 P0:2 P1:3',
     content_short: 'mock data',
@@ -36,13 +36,17 @@ export default [
     url: '/vue-element-admin/article/list',
     type: 'get',
     response: config => {
-      console.log('Time: 06-08 config.query is :', config.query)
-      const { importance, type, title, page = 1, limit = 20, sort } = config.query
+      console.log('Time: 06-10 config.query is :', config.query)
+      const { importance, type, title, page = 1, limit = 20, sort, subsys, topmodule, tag, owner } = config.query
 
       let mockList = List.filter(item => {
         if (importance && item.importance !== +importance) return false
         if (type && item.type !== type) return false
         if (title && item.title.indexOf(title) < 0) return false
+        if (subsys && item.subsys.indexOf(subsys) < 0) return false
+        if (topmodule && item.topmodule.indexOf(topmodule) < 0) return false
+        if (tag && item.tag.indexOf(tag) < 0) return false
+        if (owner && item.owner.indexOf(owner) < 0) return false
         return true
       })
 

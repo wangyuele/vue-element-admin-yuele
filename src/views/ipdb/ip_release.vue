@@ -2,12 +2,10 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.title" placeholder="Project" style="width: 90px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="IP_Version" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
+      <el-input v-model="listQuery.subsys" placeholder="Sub_sys" style="width: 90px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.topmodule" placeholder="TOP_Module" clearable class="filter-item" style="width: 130px" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.tag" placeholder="TAG" clearable class="filter-item" style="width: 130px" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.owner" placeholder="Owner" clearable class="filter-item" style="width: 130px" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
@@ -29,23 +27,25 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      height="700"
       border
       fit
       highlight-current-row
       style="width: 100%;"
+      :header-cell-style="tableHeaderColor"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Date" width="150px" align="center">
+      <el-table-column label="Date" width="140px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Project" min-width="110px">
+      <el-table-column label="Project" min-width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.title }}</span>
         </template>
@@ -55,89 +55,89 @@
           <span>{{ row.subsys }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="TOP_Module" min-width="110px" align="center">
+      <el-table-column label="TOP_Module" min-width="160px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.top_module }}</span>
+          <span>{{ row.topmodule }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="TAG" width="110px" align="center">
+      <el-table-column label="TAG" width="250px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.tag }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="FileList" width="110px" align="center">
+      <el-table-column label="FileList" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.filelist }}</span>
         </template>
       </el-table-column>
       <el-table-column label="IUS" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="DefineChk" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="ParamsChk" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="SpyLint" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Lop" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="SpySdc" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="SpyCdc" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="SpyDft" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="CLP" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="ETC" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="ERC" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="MTBF" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Latest_Goodcode" width="110px" align="center">
+      <el-table-column label="Latest_Goodcode" width="180px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Owner" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -241,6 +241,10 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
+        subsys: undefined,
+        topmodule: undefined,
+        tag: undefined,
+        owner: undefined,
         timestamp: '+id',
         sort: '+id'
       },
@@ -398,19 +402,21 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['timestamp', 'title', 'Sub_sys', 'TOP_Module', 'TAG', 'FileList']
+        const filterVal = ['timestamp', 'title', 'subsys', 'top_module', 'tag', 'filelist']
         const data = this.formatJson(filterVal)
+        console.log('Time:06-10: excel data is:', data)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'table-list'
+          filename: 'Regression-list'
         })
         this.downloadLoading = false
       })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
+        console.log('Time:06-09: this.list is :', this.list)
         if (j === 'timestamp') {
           return parseTime(v[j])
         } else {
@@ -421,6 +427,16 @@ export default {
     getSortClass: function(key) {
       const time_sort = this.listQuery.timestamp
       return time_sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    // 修改table tr行的背景颜色
+    tableRowStyle({ row, rowIndex }) {
+      return 'background-color: pink'
+    },
+    // 修改table header的背景颜色
+    tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return 'background-color: #2d96ff;color: #000000;font-weight:20;'
+      }
     }
   }
 }
