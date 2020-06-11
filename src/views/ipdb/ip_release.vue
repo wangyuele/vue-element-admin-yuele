@@ -9,7 +9,7 @@
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
@@ -18,9 +18,6 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox>
     </div>
 
     <el-table
@@ -33,6 +30,9 @@
       highlight-current-row
       style="width: 100%;"
       :header-cell-style="tableHeaderColor"
+      :header-row-style="{height:'10px'}"
+      :row-style="{height:'20px'}"
+      :cell-style="{padding:'0px'}"
       @sort-change="sortChange"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60" :class-name="getSortClass('id')">
@@ -62,13 +62,32 @@
       </el-table-column>
       <el-table-column label="TAG" width="250px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.tag }}</span>
+          <span v-if="row.tag===row.lat_tag">{{ row.tag }}</span>
+          <span v-else style="background:red">{{ row.tag }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="FileList" width="150px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.filelist }}</span>
-        </template>
+      <el-table-column label="FileList" header-align="center" align="center" width="50px" style="height: 10px">
+        <el-table-column label="Dup" header-align="center" align="left" width="48px">
+          <template slot-scope="{row}">
+            <span v-if="row.filelist_dup==='0'" style="background: #008000">{{ row.filelist_dup }}</span>
+            <span v-else-if="row.filelist_dup<=10" style="background:yellow">{{ row.filelist_dup }}</span>
+            <span v-else style="background:red">{{ row.filelist_dup }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="P0" header-align="center" align="center" width="48px">
+          <template slot-scope="{row}">
+            <span v-if="row.filelist_p0==='0'" style="background: #008000">{{ row.filelist_p0 }}</span>
+            <span v-else-if="row.filelist_p0<=10" style="background:yellow">{{ row.filelist_p0 }}</span>
+            <span v-else style="background:red">{{ row.filelist_p0 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="P1" header-align="center" align="center" width="48px">
+          <template slot-scope="{row}">
+            <span v-if="row.filelist_p1==='0'" style="background: #008000">{{ row.filelist_p1 }}</span>
+            <span v-else-if="row.filelist_p1<=10" style="background:yellow">{{ row.filelist_p1 }}</span>
+            <span v-else style="background:red">{{ row.filelist_p1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column label="IUS" width="110px" align="center">
         <template slot-scope="{row}">
@@ -130,9 +149,9 @@
           <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Latest_Goodcode" width="180px" align="center">
+      <el-table-column label="Latest_Goodcode" width="250px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.owner }}</span>
+          <span>{{ row.lat_tag }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Owner" width="110px" align="center">
@@ -213,7 +232,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 }, {})
 
 export default {
-  name: 'ComplexTable',
+  name: 'IPDB',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -237,7 +256,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 30,
         importance: undefined,
         title: undefined,
         type: undefined,
@@ -252,7 +271,6 @@ export default {
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
       temp: {
         id: undefined,
         importance: 1,
@@ -425,8 +443,8 @@ export default {
       }))
     },
     getSortClass: function(key) {
-      const time_sort = this.listQuery.timestamp
-      return time_sort === `+${key}` ? 'ascending' : 'descending'
+      const sort = this.listQuery.sort
+      return sort === `+${key}` ? 'ascending' : 'descending'
     },
     // 修改table tr行的背景颜色
     tableRowStyle({ row, rowIndex }) {
@@ -435,7 +453,10 @@ export default {
     // 修改table header的背景颜色
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'background-color: #2d96ff;color: #000000;font-weight:20;'
+        return 'background-color: #2d96ff;color: #000000;font-weight:10;'
+      }
+      if (rowIndex === 1) {
+        return 'background-color: #d6c70c;color: #000000;font-weight:10;'
       }
     }
   }
