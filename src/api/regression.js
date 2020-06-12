@@ -2,15 +2,15 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-element-admin/article/list',
+    url: '/vue-element-admin/regression/list',
     method: 'get',
     params: query
   })
 }
 
-export function fetchArticle(id) {
+export function fetchRegr(id) {
   return request({
-    url: '/vue-element-admin/article/detail',
+    url: '/vue-element-admin/regression/detail',
     method: 'get',
     params: { id }
   })
@@ -18,23 +18,23 @@ export function fetchArticle(id) {
 
 export function fetchPv(pv) {
   return request({
-    url: '/vue-element-admin/article/pv',
+    url: '/vue-element-admin/regression/pv',
     method: 'get',
     params: { pv }
   })
 }
 
-export function createArticle(data) {
+export function createRegr(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: '/vue-element-admin/regression/create',
     method: 'post',
     data
   })
 }
 
-export function updateArticle(data) {
+export function updateRegr(data) {
   return request({
-    url: '/vue-element-admin/article/update',
+    url: '/vue-element-admin/regression/update',
     method: 'post',
     data
   })

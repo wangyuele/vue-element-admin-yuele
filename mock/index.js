@@ -6,14 +6,14 @@ import table from './table'
 
 // yuele add test for role
 import role from './role'
-import article from './article'
+import regression from './regression'
 import search from './remote-search'
 
 const mocks = [
   ...user,
   ...role,
   ...table,
-  ...article,
+  ...regression,
   ...search
 ]
 

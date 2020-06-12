@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { fetchList } from '@/api/regression'
 
 export default {
   name: 'InlineEditTable',

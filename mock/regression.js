@@ -20,6 +20,42 @@ for (let i = 0; i < count; i++) {
     filelist_dup: '0',
     filelist_p0: '6',
     filelist_p1: '20',
+    ius_error: 'NA',
+    define_chk_red: '0',
+    define_chk_gro: '10',
+    define_chk_lat: '25',
+    params_chk_fat: '0',
+    params_chk_err: '12',
+    params_chk_war: '26',
+    spylint_bui: 'SE',
+    spylint_p0: '0',
+    spylint_p1: '13',
+    spylint_p2: '30',
+    lop_com: '50',
+    spysdc_bui: 'SE',
+    spysdc_p0: '0',
+    spysdc_p1: '13',
+    spysdc_p2: '30',
+    spysdc_ucr: '13',
+    spysdc_uci: '30',
+    spycdc_bui: 'SE',
+    spycdc_p0: '0',
+    spycdc_p1: '13',
+    spycdc_p2: '30',
+    spydft_bui: 'SE',
+    spydft_p0: '0',
+    spydft_p1: '13',
+    spydft_p2: '30',
+    spydft_fau: '90%',
+    clp_p0: '0',
+    clp_p1: '0',
+    etc_err: '0',
+    etc_war: '0',
+    erc_cod: '0',
+    erc_doc: '0',
+    mtbf_dat: '0',
+    mtbf_res: '0',
+    mtbf_pos: '0',
     content_short: 'mock data',
     content: baseContent,
     forecast: '@float(0, 100, 2, 2)',
@@ -36,7 +72,7 @@ for (let i = 0; i < count; i++) {
 
 export default [
   {
-    url: '/vue-element-admin/article/list',
+    url: '/vue-element-admin/regression/list',
     type: 'get',
     response: config => {
       console.log('Time: 06-10 config.query is :', config.query)
@@ -70,15 +106,15 @@ export default [
   },
 
   {
-    url: '/vue-element-admin/article/detail',
+    url: '/vue-element-admin/regression/detail',
     type: 'get',
     response: config => {
       const { id } = config.query
-      for (const article of List) {
-        if (article.id === +id) {
+      for (const regression of List) {
+        if (regression.id === +id) {
           return {
             code: 20000,
-            data: article
+            data: regression
           }
         }
       }
@@ -86,7 +122,7 @@ export default [
   },
 
   {
-    url: '/vue-element-admin/article/pv',
+    url: '/vue-element-admin/regression/pv',
     type: 'get',
     response: _ => {
       return {
@@ -104,7 +140,7 @@ export default [
   },
 
   {
-    url: '/vue-element-admin/article/create',
+    url: '/vue-element-admin/regression/create',
     type: 'post',
     response: _ => {
       return {
@@ -115,7 +151,7 @@ export default [
   },
 
   {
-    url: '/vue-element-admin/article/update',
+    url: '/vue-element-admin/regression/update',
     type: 'post',
     response: _ => {
       return {
