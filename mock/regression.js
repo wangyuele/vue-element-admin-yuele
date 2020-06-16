@@ -11,7 +11,8 @@ var sys_list = ['ap_sys', 'wcn_sys', 'gpu_sys', 'wcn_sys', 'top']
 var top_module = ['vsp_wrap', 'ap_top_pwr_wrap', 'gnss_sys_top', 'sharkl6_top', 'natt_ee_top']
 var tag = ['DE_ap_sys_0075_comp_goodcode', 'DE_ap_sys_0076_comp_goodcode', 'DE_ap_sys_0077_comp_goodcode']
 var owner = ['yuele.wang', 'hank.wang', 'guandong.wang', 'peizhuo.zhang']
-var dft_fau = ['10%', '40%', '89.9%', '91.5%', '90%', '95%', '100%']
+var dft_fau = ['10%', '40%', '89.9%', '91.5%', '90%', '95%', '100%', 'NA', 'SE']
+var filelist_dup = ['0', '6', '10', '20', 'SE', 'NA']
 for (let i = 0; i < count; i++) {
   var regr_data = Mock.mock({
     'proj_name|1': project_list,
@@ -19,6 +20,7 @@ for (let i = 0; i < count; i++) {
     'top_module|1': top_module,
     'tag|1': tag,
     'dft_fau|1': dft_fau,
+    'filelist_dup|1': filelist_dup,
     'owner|1': owner
   })
   List.push(Mock.mock({
@@ -31,7 +33,7 @@ for (let i = 0; i < count; i++) {
     topmodule: regr_data.top_module,
     tag: regr_data.tag,
     lat_tag: 'DE_ap_sys_0077_comp_goodcode',
-    filelist_dup: '0',
+    filelist_dup: regr_data.filelist_dup,
     filelist_p0: '6',
     filelist_p1: '20',
     ius_error: 'NA',
