@@ -6,16 +6,30 @@ const count = 100
 const baseContent = '<p>I am testing data, I am testing data.</p><p><img src="https://wpimg.wallstcn.com/4c69009c-0fd4-4153-b112-6cb53d1cf943"></p>'
 const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70b3'
 
+var project_list = ['SharkL6', 'SharkL6Pro', 'SharkL5', 'Orca', 'KounurK8']
+var sys_list = ['ap_sys', 'wcn_sys', 'gpu_sys', 'wcn_sys', 'top']
+var top_module = ['vsp_wrap', 'ap_top_pwr_wrap', 'gnss_sys_top', 'sharkl6_top', 'natt_ee_top']
+var tag = ['DE_ap_sys_0075_comp_goodcode', 'DE_ap_sys_0076_comp_goodcode', 'DE_ap_sys_0077_comp_goodcode']
+var owner = ['yuele.wang', 'hank.wang', 'guandong.wang', 'peizhuo.zhang']
+var dft_fau = ['10%', '40%', '89.9%', '91.5%', '90%', '95%', '100%']
 for (let i = 0; i < count; i++) {
+  var regr_data = Mock.mock({
+    'proj_name|1': project_list,
+    'sys_name|1': sys_list,
+    'top_module|1': top_module,
+    'tag|1': tag,
+    'dft_fau|1': dft_fau,
+    'owner|1': owner
+  })
   List.push(Mock.mock({
     id: '@increment',
     timestamp: +Mock.Random.date('T'),
-    owner: 'yuele.wang',
+    owner: regr_data.owner,
     reviewer: '@first',
-    title: ('SharkL6', 'SharkL6Pro'),
-    subsys: 'ap_sys',
-    topmodule: 'apcpu_top_pwr_wrap',
-    tag: 'DE_ap_sys_0075_comp_goodcode',
+    proj_name: regr_data.proj_name,
+    subsys: regr_data.sys_name,
+    topmodule: regr_data.top_module,
+    tag: regr_data.tag,
     lat_tag: 'DE_ap_sys_0077_comp_goodcode',
     filelist_dup: '0',
     filelist_p0: '6',
@@ -46,7 +60,7 @@ for (let i = 0; i < count; i++) {
     spydft_p0: '0',
     spydft_p1: '13',
     spydft_p2: '30',
-    spydft_fau: '90%',
+    spydft_fau: regr_data.dft_fau,
     clp_p0: '0',
     clp_p1: '0',
     etc_err: '0',
@@ -75,13 +89,12 @@ export default [
     url: '/vue-element-admin/regression/list',
     type: 'get',
     response: config => {
-      console.log('Time: 06-10 config.query is :', config.query)
-      const { importance, type, title, page = 1, limit = 20, sort, subsys, topmodule, tag, owner } = config.query
-
+      console.log('Time: 06-15 config.query is :', config.query)
+      const { importance, type, proj_name, page = 1, limit = 20, sort, subsys, topmodule, tag, owner } = config.query
       let mockList = List.filter(item => {
         if (importance && item.importance !== +importance) return false
         if (type && item.type !== type) return false
-        if (title && item.title.indexOf(title) < 0) return false
+        if (proj_name && item.proj_name.indexOf(proj_name) < 0) return false
         if (subsys && item.subsys.indexOf(subsys) < 0) return false
         if (topmodule && item.topmodule.indexOf(topmodule) < 0) return false
         if (tag && item.tag.indexOf(tag) < 0) return false

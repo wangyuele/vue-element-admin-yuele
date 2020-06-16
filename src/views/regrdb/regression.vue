@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Project" style="width: 90px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.proj_name" placeholder="Project" style="width: 90px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.subsys" placeholder="Sub_sys" style="width: 90px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.topmodule" placeholder="TOP_Module" clearable class="filter-item" style="width: 132px" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.tag" placeholder="TAG" clearable class="filter-item" style="width: 130px" @keyup.enter.native="handleFilter" />
@@ -47,7 +47,7 @@
       </el-table-column>
       <el-table-column label="Project" min-width="100px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.title }}</span>
+          <span>{{ row.proj_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Sub_sys" width="100px" align="center">
@@ -346,7 +346,7 @@
         </el-table-column>
         <el-table-column label="Fau" header-align="center" align="center" width="70px">
           <template slot-scope="{row}">
-            <el-tag v-if="row.spydft_fau>='90%'" type="success" color="green" effect="dark" size="small">{{ row.spydft_fau }}</el-tag>
+            <el-tag v-if="row.spydft_fau.replace('%','')>=90" type="success" color="green" effect="dark" size="small">{{ row.spydft_fau }}</el-tag>
             <el-tag v-else-if="row.spydft_fau==='NA'" type="info" effect="dark" size="small">{{ row.spydft_fau }}</el-tag>
             <el-tag v-else type="danger" color="red" effect="dark" size="small">{{ row.spydft_fau }}</el-tag>
           </template>
@@ -446,7 +446,7 @@
           <span>{{ row.lat_tag }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Owner" width="110px" align="center">
+      <el-table-column label="Owner" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.owner }}</span>
         </template>
@@ -465,8 +465,8 @@
         <el-form-item label="Date" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="Title" prop="proj_name">
+          <el-input v-model="temp.proj_name" />
         </el-form-item>
         <el-form-item label="Status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
@@ -550,7 +550,7 @@ export default {
         page: 1,
         limit: 30,
         importance: undefined,
-        title: undefined,
+        proj_name: undefined,
         type: undefined,
         subsys: undefined,
         topmodule: undefined,
@@ -568,7 +568,7 @@ export default {
         importance: 1,
         remark: '',
         timestamp: new Date(),
-        title: '',
+        proj_name: '',
         type: '',
         status: 'published'
       },
@@ -583,7 +583,7 @@ export default {
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        proj_name: [{ required: true, message: 'proj_name is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -635,7 +635,7 @@ export default {
         importance: 1,
         remark: '',
         timestamp: new Date(),
-        title: '',
+        proj_name: '',
         status: 'published',
         type: ''
       }
@@ -715,7 +715,7 @@ export default {
         const tHeader = ['Date', 'Project', 'Sub_sys', 'TOP_Module', 'TAG', 'FileList_dup', 'FileList_p0', 'Filelist_p1', 'IUS_err', 'DefineChk_red', 'DefineChk_gro', 'DefineChk_lat', 'Params_chk_Fat', 'Params_chk_err', 'Params_chk_war',
           'SpyLint_bui', 'SpyLint_p0', 'SpyLint_p1', 'SpyLint_p2', 'Lop_com', 'SpySdc_bui', 'SpySdc_p0', 'SpySdc_p1', 'SpySdc_p2', 'SpySdc_ucr', 'SpySdc_uci', 'SpyCdc_bui', 'SpyCdc_p0', 'SpyCdc_p1', 'SpyCdc_p2', 'SpyDft_bui', 'SpyDft_p0',
           'SpyDft_p1', 'SpyDft_p2', 'SpyDft_Fau', 'CLP_p0', 'CLP_p1', 'ETC_err', 'ETC_war', 'ERC_cod', 'ERC_doc', 'MTBF_dat', 'MTBF_res', 'MTBF_pos', 'Latest_Goodcode', 'Owner']
-        const filterVal = ['timestamp', 'title', 'subsys', 'topmodule', 'tag', 'filelist_dup', 'filelist_p0', 'filelist_p1', 'ius_err', 'define_chk_red', 'define_chk_gro', 'define_chk_lat', 'params_chk_fat', 'params_chk_err', 'params_chk_war',
+        const filterVal = ['timestamp', 'proj_name', 'subsys', 'topmodule', 'tag', 'filelist_dup', 'filelist_p0', 'filelist_p1', 'ius_err', 'define_chk_red', 'define_chk_gro', 'define_chk_lat', 'params_chk_fat', 'params_chk_err', 'params_chk_war',
           'spylint_bui', 'spylint_p0', 'spylint_p1', 'spylint_p2', 'lop_com', 'spysdc_bui', 'spysdc_p1', 'spysdc_p2', 'spysdc_ucr', 'spysdc_uci', 'spysdc_bui', 'spycdc_bui', 'spycdc_p0', 'spycdc_p1', 'spycdc_p2', 'spydft_bui', 'spydft_p0',
           'spydft_p1', 'spydft_p2', 'spydft_fau', 'clp_p0', 'clp_p1', 'etc_err', 'etc_war', 'erc_cod', 'erc_doc', 'mtbf_dat', 'mtbf_res', 'mtbf_pos', 'lat_tag', 'owner']
         const data = this.formatJson(filterVal)
