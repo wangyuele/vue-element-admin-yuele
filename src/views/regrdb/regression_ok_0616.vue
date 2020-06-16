@@ -21,7 +21,8 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
-      height="800"
+      height="780"
+      border
       fit
       highlight-current-row
       style="width: 100%;"
@@ -595,17 +596,9 @@ export default {
     },
     // 修改cell的背景颜色
     addClass({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex >= 0 && columnIndex <= 4) {
-        return 'padding:0px;'
-      }
-      if (columnIndex === 45 || columnIndex === 46) {
-        return 'padding:0px;'
-      }
       if (columnIndex === 5) {
         if (row.tag !== row.lat_tag) {
           return 'background-color: red; padding:0px; color: white'
-        } else {
-          return 'padding:0px; color: black'
         }
       }
       if (columnIndex === 6) {
