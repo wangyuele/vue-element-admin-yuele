@@ -74,10 +74,6 @@ for (let i = 0; i < count; i++) {
     mtbf_pos: '0',
     content_short: 'mock data',
     content: baseContent,
-    forecast: '@float(0, 100, 2, 2)',
-    importance: '@integer(1, 3)',
-    'type|1': ['CN', 'US', 'JP', 'EU'],
-    'status|1': ['published', 'draft'],
     display_time: '@datetime',
     comment_disabled: true,
     pageviews: '@integer(300, 5000)',
@@ -91,11 +87,9 @@ export default [
     url: '/vue-element-admin/regression/list',
     type: 'get',
     response: config => {
-      console.log('Time: 06-15 config.query is :', config.query)
-      const { importance, type, proj_name, page = 1, limit = 20, sort, subsys, topmodule, tag, owner } = config.query
+      console.log('Time: 06-17 config.query is :', config.query)
+      const { proj_name, page = 1, limit = 30, sort, subsys, topmodule, tag, owner, timestamp } = config.query
       let mockList = List.filter(item => {
-        if (importance && item.importance !== +importance) return false
-        if (type && item.type !== type) return false
         if (proj_name && item.proj_name.indexOf(proj_name) < 0) return false
         if (subsys && item.subsys.indexOf(subsys) < 0) return false
         if (topmodule && item.topmodule.indexOf(topmodule) < 0) return false
@@ -108,8 +102,35 @@ export default [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
+      console.log('Time: 06-17 timestamp is :', timestamp)
+      function sortFun(prop, order) {
+        // 第一个参数传入info里的prop表示排的是哪一列，第二个参数是升还是降排序
+        console.log('Time:06-17,flag2 :', order)
+        if (order == null) {
+          order = 1
+        } else {
+          order = (order) ? 1 : -1
+        }
 
+        return function(a, b) {
+          a = a[prop]
+          b = b[prop]
+          if (a < b) {
+            return order * -1
+          }
+          if (a > b) {
+            return order * 1
+          }
+          return 0
+        }
+      }
+      if (timestamp !== null) {
+        console.log('Time: 06-17 flag_here')
+        mockList = mockList.sort(sortFun('timestamp', false))
+        console.log('Time: 06-17 mockList is :', mockList)
+      }
+
+      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
       return {
         code: 20000,
         data: {

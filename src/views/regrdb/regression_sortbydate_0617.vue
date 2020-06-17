@@ -6,6 +6,9 @@
       <el-input v-model="listQuery.topmodule" placeholder="TOP_Module" clearable class="filter-item" size="small" style="width: 132px;padding:2px" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.tag" placeholder="TAG" clearable class="filter-item" size="small" style="width: 130px;padding:2px" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.owner" placeholder="Owner" clearable class="filter-item" size="small" style="width: 130px;padding:2px" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.sort" size="small" style="width: 140px;padding:2px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+      </el-select>
       <el-button v-waves class="filter-item" style="margin-left: 10px;padding:8px" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
@@ -29,6 +32,11 @@
       :cell-style="addClass"
       @sort-change="sortChange"
     >
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="65" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.id }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Date" prop="timestamp" sortable="custom" width="135px" align="center" :class-name="getSortClassdate('timestamp')">
         <template slot-scope="{row}">
           <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -365,13 +373,13 @@ export default {
       this.getList()
     },
     sortChange(data) {
-      const { prop, order } = data
+      const { column, prop, order } = data
       console.log('Time:06_17: sort data', data)
       if (prop === 'id') {
         this.sortByID(order)
       }
       if (prop === 'timestamp') {
-        this.sortByDate(order)
+        this.sortByDate(column, prop, order)
       }
     },
     sortByID(order) {
@@ -382,13 +390,34 @@ export default {
       }
       this.handleFilter()
     },
-    sortByDate(order) {
-      if (order === 'ascending') {
-        this.listQuery.timestamp = '+id'
+    sortByDate(column, prop, order) {
+      console.log('Time:06-17,flag1 :', prop)
+      this.page = 1 // return to the first page after sorting
+      this.list = this.list.sort(this.sortFun(prop, order === 'ascending'))
+      this.showed_data = this.list.slice(0, this.limit) // 排序完显示到第一页
+      console.log('Finished')
+      console.log(this.showed_data)
+    },
+    sortFun: function(prop, order) {
+      // 第一个参数传入info里的prop表示排的是哪一列，第二个参数是升还是降排序
+      console.log('Time:06-17,flag2 :', order)
+      if (order == null) {
+        order = 1
       } else {
-        this.listQuery.timestamp = '-id'
+        order = (order) ? 1 : -1
       }
-      this.handleFilter()
+
+      return function(a, b) {
+        a = a[prop]
+        b = b[prop]
+        if (a < b) {
+          return order * -1
+        }
+        if (a > b) {
+          return order * 1
+        }
+        return 0
+      }
     },
     resetTemp() {
       this.temp = {
@@ -518,20 +547,20 @@ export default {
     },
     // 修改cell的背景颜色
     addClass({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex >= 0 && columnIndex <= 3) {
+      if (columnIndex >= 0 && columnIndex <= 4) {
         return 'padding:0px;'
       }
-      if (columnIndex === 44 || columnIndex === 45) {
+      if (columnIndex === 45 || columnIndex === 46) {
         return 'padding:0px;'
       }
-      if (columnIndex === 4) {
+      if (columnIndex === 5) {
         if (row.tag !== row.lat_tag) {
           return 'background-color: red; padding:0px; color: white'
         } else {
           return 'padding:0px; color: black'
         }
       }
-      if (columnIndex === 5) {
+      if (columnIndex === 6) {
         if (row.filelist_dup === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.filelist_dup <= 10) {
@@ -544,7 +573,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 6) {
+      if (columnIndex === 7) {
         if (row.filelist_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.filelist_p0 <= 10) {
@@ -557,7 +586,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 7) {
+      if (columnIndex === 8) {
         if (row.filelist_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.filelist_p1 <= 10) {
@@ -570,7 +599,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 8) {
+      if (columnIndex === 9) {
         if (row.ius_error === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.ius_error <= 10) {
@@ -583,7 +612,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 9) {
+      if (columnIndex === 10) {
         if (row.define_chk_red === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.define_chk_red <= 10) {
@@ -596,7 +625,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 10) {
+      if (columnIndex === 11) {
         if (row.define_chk_gro === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.define_chk_gro <= 10) {
@@ -609,7 +638,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 11) {
+      if (columnIndex === 12) {
         if (row.define_chk_lat === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.define_chk_lat <= 10) {
@@ -622,7 +651,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 12) {
+      if (columnIndex === 13) {
         if (row.params_chk_fat === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.params_chk_fat <= 10) {
@@ -635,7 +664,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 13) {
+      if (columnIndex === 14) {
         if (row.params_chk_err === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.params_chk_err <= 10) {
@@ -648,7 +677,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 14) {
+      if (columnIndex === 15) {
         if (row.params_chk_war === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.params_chk_war <= 10) {
@@ -661,7 +690,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 15) {
+      if (columnIndex === 16) {
         if (row.spylint_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_bui <= 10) {
@@ -674,7 +703,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 16) {
+      if (columnIndex === 17) {
         if (row.spylint_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_p0 <= 10) {
@@ -687,7 +716,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 17) {
+      if (columnIndex === 18) {
         if (row.spylint_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_p1 <= 10) {
@@ -700,7 +729,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 18) {
+      if (columnIndex === 19) {
         if (row.spylint_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_p2 <= 10) {
@@ -713,7 +742,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 19) {
+      if (columnIndex === 20) {
         if (row.lop_com === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.lop_com <= 10) {
@@ -726,7 +755,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 20) {
+      if (columnIndex === 21) {
         if (row.spysdc_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_bui <= 10) {
@@ -739,7 +768,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 21) {
+      if (columnIndex === 22) {
         if (row.spysdc_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_p0 <= 10) {
@@ -752,7 +781,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 22) {
+      if (columnIndex === 23) {
         if (row.spysdc_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_p1 <= 10) {
@@ -765,7 +794,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 23) {
+      if (columnIndex === 24) {
         if (row.spysdc_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_p2 <= 10) {
@@ -778,7 +807,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 24) {
+      if (columnIndex === 25) {
         if (row.spysdc_ucr === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_ucr <= 10) {
@@ -791,7 +820,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 25) {
+      if (columnIndex === 26) {
         if (row.spysdc_uci === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_uci <= 10) {
@@ -804,7 +833,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 26) {
+      if (columnIndex === 27) {
         if (row.spycdc_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_bui <= 10) {
@@ -817,7 +846,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 27) {
+      if (columnIndex === 28) {
         if (row.spycdc_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_p0 <= 10) {
@@ -830,7 +859,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 28) {
+      if (columnIndex === 29) {
         if (row.spycdc_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_p1 <= 10) {
@@ -843,7 +872,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 29) {
+      if (columnIndex === 30) {
         if (row.spycdc_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_p2 <= 10) {
@@ -856,7 +885,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 30) {
+      if (columnIndex === 31) {
         if (row.spydft_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_bui <= 10) {
@@ -869,7 +898,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 31) {
+      if (columnIndex === 32) {
         if (row.spydft_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_p0 <= 10) {
@@ -882,7 +911,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 32) {
+      if (columnIndex === 33) {
         if (row.spydft_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_p1 <= 10) {
@@ -895,7 +924,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 33) {
+      if (columnIndex === 34) {
         if (row.spydft_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_p2 <= 10) {
@@ -908,7 +937,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 34) {
+      if (columnIndex === 35) {
         if (row.spydft_fau.replace('%', '') >= 90) {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_fau.replace('%', '') < 90) {
@@ -919,7 +948,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 35) {
+      if (columnIndex === 36) {
         if (row.clp_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.clp_p0 <= 10) {
@@ -932,7 +961,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 36) {
+      if (columnIndex === 37) {
         if (row.clp_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.clp_p1 <= 10) {
@@ -945,7 +974,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 37) {
+      if (columnIndex === 38) {
         if (row.etc_err === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.etc_err <= 10) {
@@ -958,7 +987,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 38) {
+      if (columnIndex === 39) {
         if (row.etc_war === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.etc_war <= 10) {
@@ -971,7 +1000,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 39) {
+      if (columnIndex === 40) {
         if (row.erc_cod === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.erc_cod <= 10) {
@@ -984,7 +1013,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 40) {
+      if (columnIndex === 41) {
         if (row.erc_doc === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.erc_doc <= 10) {
@@ -997,7 +1026,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 41) {
+      if (columnIndex === 42) {
         if (row.mtbf_dat === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.mtbf_dat <= 10) {
@@ -1010,7 +1039,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 42) {
+      if (columnIndex === 43) {
         if (row.mtbf_res === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.mtbf_res <= 10) {
@@ -1023,7 +1052,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 43) {
+      if (columnIndex === 44) {
         if (row.mtbf_pos === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.mtbf_pos <= 10) {
