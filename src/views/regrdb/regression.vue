@@ -36,22 +36,22 @@
       </el-table-column>
       <el-table-column label="Project" min-width="95px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.proj_name }}</span>
+          <span style="float:left">{{ row.proj_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Sub_sys" width="100px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.subsys }}</span>
+          <span style="float:left">{{ row.subsys }}</span>
         </template>
       </el-table-column>
       <el-table-column label="TOP_Module" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.topmodule }}</span>
+          <span style="float:left">{{ row.topmodule }}</span>
         </template>
       </el-table-column>
       <el-table-column label="TAG" width="245px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.tag }}</span>
+          <span style="float:left">{{ row.tag }}</span>
         </template>
       </el-table-column>
       <el-table-column label="FileList" header-align="center" align="center" width="50px" style="width: 10%;margin-top: 20px">
@@ -277,12 +277,12 @@
       </el-table-column>
       <el-table-column label="Latest_Goodcode" width="245px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.lat_tag }}</span>
+          <span style="float:left">{{ row.lat_tag }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Owner" width="130px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.owner }}</span>
+          <span style="float:left">{{ row.owner }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -510,10 +510,10 @@ export default {
     // 修改table header的背景颜色
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'background-color: #2d96ff;color: #000000;font-weight:20;padding:2px;'
+        return 'background-color: #2d96ff;color: #000000;font-weight:20 !important;padding:2px;'
       }
       if (rowIndex === 1) {
-        return 'background-color: #d6c70c;color: #000000;font-weight:10;padding:2px;'
+        return 'background-color: #d6c70c;color: #000000;font-weight:10 !important;padding:2px;'
       }
     },
     // 修改cell的背景颜色
