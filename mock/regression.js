@@ -21,12 +21,14 @@ for (let i = 0; i < count; i++) {
     'tag|1': tag,
     'dft_fau|1': dft_fau,
     'filelist_dup|1': filelist_dup,
-    'owner|1': owner
+    'owner|1': owner,
+    'submitter|1': owner
   })
   List.push(Mock.mock({
     id: '@increment',
     timestamp: +Mock.Random.date('T'),
     owner: regr_data.owner,
+    submitter: regr_data.submitter,
     reviewer: '@first',
     proj_name: regr_data.proj_name,
     subsys: regr_data.sys_name,
@@ -87,14 +89,15 @@ export default [
     url: '/vue-element-admin/regression/list',
     type: 'get',
     response: config => {
-      console.log('Time: 06-17 config.query is :', config.query)
-      const { proj_name, page = 1, limit = 30, sort, subsys, topmodule, tag, owner, timestamp } = config.query
+      console.log('Time: 06-22 config.query is :', config.query)
+      const { proj_name, page = 1, limit = 30, sort, subsys, topmodule, tag, owner, submitter, timestamp, start, end } = config.query
       let mockList = List.filter(item => {
         if (proj_name && item.proj_name.indexOf(proj_name) < 0) return false
         if (subsys && item.subsys.indexOf(subsys) < 0) return false
         if (topmodule && item.topmodule.indexOf(topmodule) < 0) return false
         if (tag && item.tag.indexOf(tag) < 0) return false
         if (owner && item.owner.indexOf(owner) < 0) return false
+        if (submitter && item.submitter.indexOf(submitter) < 0) return false
         return true
       })
 

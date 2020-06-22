@@ -6,6 +6,10 @@
       <el-input v-model="listQuery.topmodule" placeholder="TOP_Module" clearable class="filter-item" size="small" style="width: 132px;padding:2px" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.tag" placeholder="TAG" clearable class="filter-item" size="small" style="width: 130px;padding:2px" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.owner" placeholder="Owner" clearable class="filter-item" size="small" style="width: 130px;padding:2px" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.submitter" placeholder="Submitter" clearable class="filter-item" size="small" style="width: 130px; padding:2px" @keyup.enter.native="handleFilter" />
+      <el-date-picker v-model="listQuery.start" style="width: 210px;margin-left: 10px;padding:8px" type="datetime" placeholder="StartDate" value-format="yyyy-MM-dd HH:mm" size="small" :default-time="'00:00'" />
+      -
+      <el-date-picker v-model="listQuery.end" style="width: 210px;padding:8px" type="datetime" placeholder="EndDate" value-format="yyyy-MM-dd HH:mm" size="small" :default-time="'23:59'" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;padding:8px" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
@@ -285,6 +289,11 @@
           <span style="float:left">{{ row.owner }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Submitter" width="130px" align="center">
+        <template slot-scope="{row}">
+          <span style="float:left">{{ row.submitter }}</span>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
@@ -337,8 +346,11 @@ export default {
         topmodule: undefined,
         tag: undefined,
         owner: undefined,
+        submitter: undefined,
         timestamp: '+id',
-        sort: '+id'
+        sort: '+id',
+        start: '',
+        end: ''
       },
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       downloadLoading: false
@@ -510,10 +522,10 @@ export default {
     // 修改table header的背景颜色
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'background-color: #2d96ff;color: #000000;font-weight:20 !important;padding:2px;'
+        return 'background-color: #2d96ff;color: #000000;font-weight:20;padding:2px;'
       }
       if (rowIndex === 1) {
-        return 'background-color: #d6c70c;color: #000000;font-weight:10 !important;padding:2px;'
+        return 'background-color: #d6c70c;color: #000000;font-weight:10;padding:2px;'
       }
     },
     // 修改cell的背景颜色
@@ -521,7 +533,7 @@ export default {
       if (columnIndex >= 0 && columnIndex <= 3) {
         return 'padding:0px;'
       }
-      if (columnIndex === 44 || columnIndex === 45) {
+      if (columnIndex === 44 || columnIndex === 45 || columnIndex === 46) {
         return 'padding:0px;'
       }
       if (columnIndex === 4) {
