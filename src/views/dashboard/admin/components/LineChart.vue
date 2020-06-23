@@ -59,9 +59,10 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
+      console.log('Time:06-23 chart', this.chartData)
       this.setOptions(this.chartData)
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ P0Data, P1Data } = {}) {
       this.chart.setOption({
         xAxis: {
           data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -104,7 +105,7 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: expectedData,
+          data: P0Data,
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
@@ -124,7 +125,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: P1Data,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]

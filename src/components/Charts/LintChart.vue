@@ -54,7 +54,7 @@ export default {
       this.chart.setOption({
         backgroundColor: '#344b58',
         title: {
-          text: 'statistics',
+          text: 'LINT_P0+P1',
           x: '20',
           top: '20',
           textStyle: {
@@ -90,7 +90,7 @@ export default {
           textStyle: {
             color: '#90979c'
           },
-          data: ['female', 'male', 'average']
+          data: ['ap_sys', 'wcn_sys', 'top']
         },
         calculable: true,
         xAxis: [{
@@ -162,8 +162,8 @@ export default {
           end: 35
         }],
         series: [{
-          name: 'female',
-          type: 'bar',
+          name: 'ap_sys',
+          type: 'line',
           stack: 'total',
           barMaxWidth: 35,
           barGap: '10%',
@@ -183,7 +183,7 @@ export default {
             }
           },
           data: [
-            709,
+            700,
             1917,
             2455,
             2610,
@@ -199,8 +199,8 @@ export default {
         },
 
         {
-          name: 'male',
-          type: 'bar',
+          name: 'wcn_sys',
+          type: 'line',
           stack: 'total',
           itemStyle: {
             normal: {
@@ -230,7 +230,7 @@ export default {
             220
           ]
         }, {
-          name: 'average',
+          name: 'top',
           type: 'line',
           stack: 'total',
           symbolSize: 10,

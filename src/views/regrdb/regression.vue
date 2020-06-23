@@ -53,7 +53,7 @@
           <span style="float:left">{{ row.topmodule }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="TAG" width="245px" align="center">
+      <el-table-column label="TAG" width="246px" align="center">
         <template slot-scope="{row}">
           <span style="float:left">{{ row.tag }}</span>
         </template>
@@ -279,7 +279,7 @@
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column label="Latest_Goodcode" width="245px" align="center">
+      <el-table-column label="Latest_Goodcode" width="246px" align="center">
         <template slot-scope="{row}">
           <span style="float:left">{{ row.lat_tag }}</span>
         </template>

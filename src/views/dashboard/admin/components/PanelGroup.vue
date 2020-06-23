@@ -1,13 +1,13 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" @click="handleSetLineChartData('LINT')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            LINT
           </div>
           <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
         </div>
@@ -20,7 +20,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            CDC
           </div>
           <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
         </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            SDC
           </div>
           <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
         </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Shoppings
+            DFT
           </div>
           <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
         </div>
