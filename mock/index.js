@@ -7,6 +7,7 @@ import table from './table'
 // yuele add test for role
 import role from './role'
 import regression from './regression'
+import regrdb from './regrdb'
 import search from './remote-search'
 
 const mocks = [
@@ -14,6 +15,7 @@ const mocks = [
   ...role,
   ...table,
   ...regression,
+  ...regrdb,
   ...search
 ]
 

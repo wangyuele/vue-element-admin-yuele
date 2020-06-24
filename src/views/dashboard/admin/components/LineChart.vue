@@ -62,9 +62,11 @@ export default {
       console.log('Time:06-23 chart', this.chartData)
       this.setOptions(this.chartData)
     },
-    setOptions({ P0Data, P1Data } = {}) {
+    setOptions({ P0Data, P1Data, sys } = {}) {
+      console.log('Time:06-24 sys', sys)
       this.chart.setOption({
         xAxis: {
+          // data: sys,
           data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           boundaryGap: false,
           axisTick: {

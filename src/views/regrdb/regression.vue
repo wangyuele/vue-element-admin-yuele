@@ -351,9 +351,7 @@ export default {
         sort: '+id',
         start: '',
         end: ''
-      },
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      downloadLoading: false
+      }
     }
   },
   created() {
