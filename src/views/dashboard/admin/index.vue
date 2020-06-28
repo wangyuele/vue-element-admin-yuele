@@ -54,11 +54,60 @@ import { fetchData } from '@/api/chart'
 import { parseTime } from '@/utils'
 console.log('Time:06-24 regdb flag1', fetchData)
 
+// json 类
+function Json(sys_name, date, p0_p1_num) {
+  this.subsys_name = sys_name
+  this.date = date
+  this.p0_p1_num = p0_p1_num
+}
+// 字典 Dictionary类
+function Dictionary() {
+  this.add = add
+  this.datastore = []
+  this.find = find
+  this.remove = remove
+  this.showAll = showAll
+  this.count = count
+  this.clear = clear
+}
+function add(key, value) {
+  this.datastore[key] = value
+}
+function find(key) {
+  return this.datastore[key]
+}
+function remove(key) {
+  delete this.datastore[key]
+}
+function showAll() {
+  var str = ''
+  for (var key in this.datastore) {
+    str += key + ' -> ' + this.datastore[key] + '; '
+  }
+  console.log('Time:06-28 show datastore', str)
+}
+function count() {
+  /* var ss = Object.keys(this.datastore).length;
+  console.log("ssss  "+ss);
+  return Object.keys(this.datastore).length;*/
+  /**/
+  var n = 0
+  for (var key in Object.keys(this.datastore)) {
+    ++n
+  }
+  console.log(n, key)
+  return n
+}
+function clear() {
+  for (var key in this.datastore) {
+    delete this.datastore[key]
+  }
+}
 var lineChartData = {
   LINT: {
-    P0Data: [100, 50, 10, 80, 50, 80, 100],
-    P1Data: [120, 82, 91, 154, 162, 140, 145],
-    sys: []
+    XData: [100, 50, 10, 80, 50, 80, 100],
+    YData: [120, 82, 91, 154, 162, 140, 145],
+    test_data: []
   },
   messages: {
     P0Data: [200, 192, 120, 144, 160, 130, 140],
@@ -93,8 +142,6 @@ export default {
       lint_data: [],
       lint_date: [],
       lint_sys: [],
-      lint_test: {},
-      sys_lint_num: 0,
       sys_num: 0,
       listQuery: {
         page: 1,
@@ -125,30 +172,46 @@ export default {
         for (let key = 0; key < this.list.length; key++) {
           this.lint_data[key] = parseInt(this.list[key].spylint_p0) + parseInt(this.list[key].spylint_p1)
           this.lint_date[key] = parseTime(this.list[key].timestamp, '{y}-{m}-{d} {h}:{i}')
-          console.log('Time:06-24 indexof', this.lint_sys.indexOf(this.list[key].subsys))
+          // console.log('Time:06-24 indexof', this.lint_sys.indexOf(this.list[key].subsys))
+          // console.log('Time:06-28 sub_sys', this.list[key].subsys)
           if (this.lint_sys.indexOf(this.list[key].subsys) === -1) {
             this.lint_sys[this.sys_num] = this.list[key].subsys
             this.sys_num++
           }
         }
         // 0624 fix here for yuele
+        var sub_sys_lint = new Dictionary()
+        var lint_json_list = []
         for (let i = 0; i < (this.lint_sys.length); i++) {
+          var lint_json = new Json()
+          var temp_date_list = []
+          var temp_p0_p1_list = []
+          var index_num = 0
           for (let k = 0; k < this.list.length; k++) {
             if (this.lint_sys[i] === this.list[k].subsys) {
-              console.log('OK')
-              this.lint_test.push(this.lint_sys[i])
-              console.log('flag1')
-              this.lint_test.this.lint_sys[i].this.sys_lint_num = parseInt(this.list[k].spylint_p0) + parseInt(this.list[k].spylint_p1)
-              console.log('Time:06-24 i', this.lint_test)
+              // var lint_json = new Json()
+              // console.log('Time:0628 i=, k=', i, k)
+              temp_date_list[index_num] = parseTime(this.list[k].timestamp, '{y}-{m}-{d} {h}:{i}')
+              temp_p0_p1_list[index_num] = parseInt(this.list[k].spylint_p0) + parseInt(this.list[k].spylint_p1)
+              index_num++
+              // console.log('Time:06-28,date ,p0 , list[]', temp_date_list, temp_p0_p1_list, k)
+              sub_sys_lint.add('ap_sys', 'date')
+              // sub_sys_lint.showAll()
             }
           }
+          lint_json.subsys_name = this.lint_sys[i]
+          lint_json.date = temp_date_list
+          lint_json.p0_p1_num = temp_p0_p1_list
+          lint_json_list[i] = lint_json
+          lineChartData.LINT.test_data[i] = lint_json
+          console.log('Time:06-28 lint_json_flag1', lint_json_list)
         }
-        this.lineChartData.P0Data = this.lint_data
-        this.lineChartData.P1Data = this.lint_date
-        this.lineChartData.sys = this.lint_sys
+        // lineChartData.LINT.P0Data = this.lint_data
+        // lineChartData.LINT.P1Data = this.lint_date
+        lineChartData.LINT.subsys_list = this.lint_sys
         console.log('Time:06-24 lint_data', this.lint_data, this.lint_date)
-        console.log('Time:06-24 lint_data', this.lineChartData.P0Data)
-        console.log('Time:06-24 lint_sys', this.lineChartData.sys)
+        console.log('Time:06-28 lint_data', lineChartData.LINT.XData)
+        console.log('Time:06-28 lint_test_data flag1', lineChartData.LINT)
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -156,6 +219,7 @@ export default {
         }, 1.5 * 1000)
       })
     },
+
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
     }

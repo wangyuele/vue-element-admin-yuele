@@ -62,8 +62,8 @@ export default {
       console.log('Time:06-23 chart', this.chartData)
       this.setOptions(this.chartData)
     },
-    setOptions({ P0Data, P1Data, sys } = {}) {
-      console.log('Time:06-24 sys', sys)
+    setOptions({ XData, YData, test_data, subsys_list } = {}) {
+      console.log('Time:06-28 test_data flag2', test_data, subsys_list)
       this.chart.setOption({
         xAxis: {
           // data: sys,
@@ -107,7 +107,7 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: P0Data,
+          data: XData,
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
@@ -127,7 +127,7 @@ export default {
               }
             }
           },
-          data: P1Data,
+          data: YData,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]
