@@ -1,12 +1,13 @@
 <template>
-  <div :id="id" :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import echarts from 'echarts'
+require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 
-// add by yuele
+// yuele modify in 2020-06-29
 const _data = [
   { 'Time Serie': '2015-12-01', 'AUSTRALIA - AUSTRALIAN DOLLAR/US$': '1.3661', 'EURO AREA - EURO/US$': '0.9416', 'NEW ZEALAND - NEW ZELAND DOLLAR/US$': '1.4972', 'UNITED KINGDOM - UNITED KINGDOM POUND/US$': '0.6634', 'BRAZIL - REAL/US$': '3.8491', 'CANADA - CANADIAN DOLLAR/US$': '1.3372', 'CHINA - YUAN/US$': '6.3883', 'HONG KONG - HONG KONG DOLLAR/US$': '7.7518', 'INDIA - INDIAN RUPEE/US$': '66.46', 'KOREA - WON/US$': '1149.39', 'MEXICO - MEXICAN PESO/US$': '16.5305', 'SOUTH AFRICA - RAND/US$': '14.4325', 'SINGAPORE - SINGAPORE DOLLAR/US$': '1.4071', 'DENMARK - DANISH KRONE/US$': '7.0245', 'JAPAN - YEN/US$': '122.88', 'MALAYSIA - RINGGIT/US$': '4.242', 'NORWAY - NORWEGIAN KRONE/US$': '8.6434', 'SWEDEN - KRONA/US$': '8.6974', 'SRI LANKA - SRI LANKAN RUPEE/US$': '142.76', 'SWITZERLAND - FRANC/US$': '1.0296', 'TAIWAN - NEW TAIWAN DOLLAR/US$': '32.53', 'THAILAND - BAHT/US$': '35.75' },
   { 'Time Serie': '2015-12-02', 'AUSTRALIA - AUSTRALIAN DOLLAR/US$': '1.3682', 'EURO AREA - EURO/US$': '0.9458', 'NEW ZEALAND - NEW ZELAND DOLLAR/US$': '1.5085', 'UNITED KINGDOM - UNITED KINGDOM POUND/US$': '0.6699', 'BRAZIL - REAL/US$': '3.8633', 'CANADA - CANADIAN DOLLAR/US$': '1.3357', 'CHINA - YUAN/US$': '6.3883', 'HONG KONG - HONG KONG DOLLAR/US$': '7.7504', 'INDIA - INDIAN RUPEE/US$': '66.53', 'KOREA - WON/US$': '1149.39', 'MEXICO - MEXICAN PESO/US$': '16.588', 'SOUTH AFRICA - RAND/US$': '14.375', 'SINGAPORE - SINGAPORE DOLLAR/US$': '1.4122', 'DENMARK - DANISH KRONE/US$': '7.0549', 'JAPAN - YEN/US$': '123.52', 'MALAYSIA - RINGGIT/US$': '4.242', 'NORWAY - NORWEGIAN KRONE/US$': '8.6591', 'SWEDEN - KRONA/US$': '8.7069', 'SRI LANKA - SRI LANKAN RUPEE/US$': '142.76', 'SWITZERLAND - FRANC/US$': '1.0274', 'TAIWAN - NEW TAIWAN DOLLAR/US$': '32.53', 'THAILAND - BAHT/US$': '35.75' },
@@ -316,7 +317,6 @@ const _data = [
     'TAIWAN - NEW TAIWAN DOLLAR/US$': '29.91',
     'THAILAND - BAHT/US$': '29.75' }
 ]
-
 const countryMap = {
   'AUSTRALIA - AUSTRALIAN DOLLAR/US$': {
     'text': '澳元',
@@ -407,15 +407,12 @@ const countryMap = {
     'color': 'rgb(241, 198, 88)'
   }
 }
-
-let timeRange = ['2015-12-01', '2016-12-31']
+let timeRange = ['2015-12-31', '2016-12-31']
 const _seriesData = []
 const xAxisData = []
 const _dataObj = {}
 let legendData = []
 let _lengedMax = 0
-console.log('Time:06-29,timeRange', timeRange, _lengedMax)
-
 initData()
 function initData() {
   _data.forEach((item, index) => {
@@ -463,8 +460,8 @@ function initData() {
     _seriesData.push(_dataObj[country])
   })
 }
-
-var option = {
+// eslint-disable-next-line no-undef
+option = {
   backgroundColor: '#000',
   title: [{
     text: '2000年-2019年美元兑换外汇',
@@ -484,7 +481,7 @@ var option = {
     }
   }],
   grid: {
-    right: 100
+    right: 400
   },
   tooltip: {
     trigger: 'axis'
@@ -648,18 +645,39 @@ function createdLegendData() {
     legendData.push(item)
   })
 }
-/*
+
 function updateLegend() {
   setTimeout(function() {
     createdLegendData()
-    this.chart.setOption({
+    // eslint-disable-next-line no-undef
+    myChart.setOption({
       legend: {
         data: legendData
       }
     })
   }, 100)
 }
-updateLegend() */
+updateLegend()
+// eslint-disable-next-line no-undef
+myChart.on('datazoom', function(params) {
+  // eslint-disable-next-line no-undef
+  var xAxis = myChart.getModel().option.xAxis[0]
+  var startTime = xAxis.data[xAxis.rangeStart]
+  var endTime = xAxis.data[xAxis.rangeEnd]
+  timeRange = [startTime, endTime]
+  updateLegend()
+})
+
+setTimeout(function() {
+  // eslint-disable-next-line no-undef
+  myChart.setOption({
+    dataZoom: [{
+      start: 80,
+      end: 100
+    }]
+  })
+}, 1000)
+// 上面是gallery网上的内容
 
 export default {
   mixins: [resize],
@@ -668,17 +686,21 @@ export default {
       type: String,
       default: 'chart'
     },
-    id: {
-      type: String,
-      default: 'chart'
-    },
     width: {
       type: String,
-      default: '200px'
+      default: '100%'
     },
     height: {
       type: String,
-      default: '200px'
+      default: '350px'
+    },
+    autoResize: {
+      type: Boolean,
+      default: true
+    },
+    chartData: {
+      type: Object,
+      required: true
     }
   },
   data() {
@@ -686,8 +708,18 @@ export default {
       chart: null
     }
   },
+  watch: {
+    chartData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
+    }
+  },
   mounted() {
-    this.initChart()
+    this.$nextTick(() => {
+      this.initChart()
+    })
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -698,39 +730,82 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(document.getElementById(this.id))
-      console.log('Time:06-29: this.mychart', this.chart)
-      this.chart.on('datazoom', function(params) {
-        // eslint-disable-next-line no-undef
-        var xAxis = this.chart.getModel().option.xAxis[0]
-        var startTime = xAxis.data[xAxis.rangeStart]
-        var endTime = xAxis.data[xAxis.rangeEnd]
-        timeRange = [startTime, endTime]
-        this.updateLegend()
-      })
-      this.chart.setOption({
-        backgroundColor: '#344b58',
-        title: option.title,
-        tooltip: option.tooltip,
-        grid: option.grid,
-        legend: option.legend,
-        calculable: true,
-        xAxis: option.xAxis,
-        yAxis: option.yAxis,
-        dataZoom: option.dataZoom,
-        series: option.series
-      })
+      this.chart = echarts.init(this.$el, 'macarons')
+      console.log('Time:06-23 chart', this.chartData)
+      this.setOptions(this.chartData)
     },
-    updateLegend() {
-      setTimeout(function() {
-        createdLegendData()
-        this.chart.setOption({
-          legend: {
-            data: legendData
+    setOptions({ XData, YData, test_data, subsys_list } = {}) {
+      console.log('Time:06-28 test_data flag2', test_data, subsys_list)
+      this.chart.setOption({
+        xAxis: {
+          // data: sys,
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          boundaryGap: false,
+          axisTick: {
+            show: false
           }
-        })
-      }, 100)
+        },
+        grid: {
+          left: 10,
+          right: 10,
+          bottom: 20,
+          top: 30,
+          containLabel: true
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          },
+          padding: [5, 10]
+        },
+        yAxis: {
+          axisTick: {
+            show: false
+          }
+        },
+        legend: {
+          data: ['expected', 'actual']
+        },
+        series: [{
+          name: 'expected', itemStyle: {
+            normal: {
+              color: '#FF005A',
+              lineStyle: {
+                color: '#FF005A',
+                width: 2
+              }
+            }
+          },
+          smooth: true,
+          type: 'line',
+          data: XData,
+          animationDuration: 2800,
+          animationEasing: 'cubicInOut'
+        },
+        {
+          name: 'actual',
+          smooth: true,
+          type: 'line',
+          itemStyle: {
+            normal: {
+              color: '#3888fa',
+              lineStyle: {
+                color: '#3888fa',
+                width: 2
+              },
+              areaStyle: {
+                color: '#f3f8ff'
+              }
+            }
+          },
+          data: YData,
+          animationDuration: 2800,
+          animationEasing: 'quadraticOut'
+        }]
+      })
     }
   }
 }
+
 </script>
