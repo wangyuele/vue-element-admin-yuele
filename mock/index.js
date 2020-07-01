@@ -8,6 +8,7 @@ import table from './table'
 import role from './role'
 import regression from './regression'
 import regrdb from './regrdb'
+import lint_db from './lint_chart'
 import search from './remote-search'
 
 const mocks = [
@@ -16,6 +17,7 @@ const mocks = [
   ...table,
   ...regression,
   ...regrdb,
+  ...lint_db,
   ...search
 ]
 

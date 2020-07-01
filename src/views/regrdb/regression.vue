@@ -351,7 +351,8 @@ export default {
         sort: '+id',
         start: '',
         end: ''
-      }
+      },
+      downloadLoading: false
     }
   },
   created() {
