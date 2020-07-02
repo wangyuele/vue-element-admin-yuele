@@ -7,6 +7,7 @@ import echarts from 'echarts'
 import resize from './mixins/resize'
 
 import { fetchData } from '@/api/lint_chart'
+/*
 import { parseTime } from '@/utils'
 
 // json 类 trans_data
@@ -14,7 +15,7 @@ function Json(sys_name, date, p0_p1_num) {
   this.subsys_name = sys_name
   this.date = date
   this.p0_p1_num = p0_p1_num
-}
+} */
 
 // added by yuele for test
 const _data = [
@@ -432,6 +433,7 @@ export default {
       })
     },
     initChart() {
+      console.log('Time:07-02: this.id', this.id)
       chart = echarts.init(document.getElementById(this.id))
       // setOption
       chart.setOption({
