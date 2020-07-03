@@ -16,8 +16,43 @@
       <el-button v-waves :loading="downloadLoading" style="margin-left: 10px;padding:8px" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
+
+      <el-button v-waves type="primary" style="margin-left: 10px;padding:8px" icon="el-icon-search" @click="dialogVisible = true">
+        LintChart
+      </el-button>
+
+      <el-dialog
+        title="Lint Chart"
+        :visible.sync="dialogVisible"
+        width="60%"
+        :before-close="handleClose"
+        append-to-body
+        center
+        @open="open()"
+        @change_chart="change_chart()"
+      >
+        <el-select v-model="value" placeholder="请选择" @change_chart="change_chart()">
+          <el-option
+            v-for="item in check_item"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-form :inline="true" size="max" label-width="80px">
+          <el-row :gutter="10">
+            <el-col :xs="500" :sm="500" :md="500" :lg="500">
+              <el-form-item label="Lint Chart">
+                <div :id="id" :class="className" :style="{height:height,width:width}" />
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="24" :lg="22" style="text-align:right;padding:0px;margin-right: 10px">
+              <el-button type="primary" size="small">确定</el-button>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-dialog>
     </div>
-    <div :id="id" :class="className" :style="{height:height,width:width}" />
 
     <el-table
       ref="multipleTable"
@@ -36,7 +71,7 @@
       @sort-change="sortChange"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" />
+      <el-table-column type="selection" width="40" />
       <el-table-column label="Date" prop="timestamp" sortable="custom" width="135px" align="center" :class-name="getSortClassdate('timestamp')">
         <template slot-scope="{row}">
           <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -368,7 +403,7 @@ const sysMap = {
   }
 }
 
-let timeRange = ['2020-05-03', '2020-07-05']
+let timeRange = ['2020-06-03', '2020-06-05']
 const _seriesData = []
 const xAxisData = []
 const _dataObj = {}
@@ -582,7 +617,7 @@ function createdLegendData() {
       })
     }
   })
-  console.log('Tiem:07-01: _newDataObj', _newDataObj)
+  console.log('Tiem:07-03: _newDataObj', _newDataObj)
   const maxWidth = 1000
   let newData = []
   Object.keys(_newDataObj).forEach(country => {
@@ -619,6 +654,7 @@ function createdLegendData() {
 function updateLegend() {
   setTimeout(function() {
     createdLegendData()
+    console.log('Time:07-03 funcs updateLegend, legendData', legendData)
     chart.setOption({
       legend: {
         data: legendData
@@ -627,6 +663,7 @@ function updateLegend() {
   }, 100)
 }
 updateLegend()
+console.log('Time:07-03 Legend flag1', legendData)
 
 export default {
   name: 'RegrDB',
@@ -642,6 +679,7 @@ export default {
       return statusMap[status]
     }
   },
+  // mixins: [resize],
   props: {
     className: {
       type: String,
@@ -653,11 +691,11 @@ export default {
     },
     width: {
       type: String,
-      default: '1000px' // echart's width
+      default: '1100px' // echart's width
     },
     height: {
       type: String,
-      default: '500px' // echart's height
+      default: '600px' // echart's height
     }
   },
   data() {
@@ -684,6 +722,19 @@ export default {
         end: ''
       },
       downloadLoading: false,
+      dialogVisible: false,
+      // 弹框选择
+      value: 'lint_data',
+      check_item: [{
+        value: 'lint_data',
+        label: 'LINT'
+      }, {
+        value: 'cdc_data',
+        label: 'CDC'
+      }, {
+        value: 'dft_data',
+        label: 'DFT'
+      }],
       multipleSelection: []
     }
   },
@@ -691,7 +742,9 @@ export default {
     this.getList()
   },
   mounted() {
-    this.initChart()
+    this.$nextTick(function() {
+      this.initChart()
+    })
   },
   methods: {
     getList() {
@@ -707,6 +760,8 @@ export default {
       })
     },
     initChart() {
+      updateLegend()
+      console.log('Time:07-03 Legend flag2', legendData)
       chart = echarts.init(document.getElementById(this.id))
       // setOption
       chart.setOption({
@@ -725,7 +780,7 @@ export default {
       chart.on('datazoom', function(params) {
         console.log('Time:06-30 params', params, chart)
         var xAxis = chart.getModel().option.xAxis[0]
-        console.log('Time:07-01 xAxis', xAxis)
+        console.log('Time:07-03 xAxis', xAxis)
         var startTime = xAxis.data[xAxis.rangeStart]
         var endTime = xAxis.data[xAxis.rangeEnd]
         timeRange = [startTime, endTime]
@@ -895,6 +950,22 @@ export default {
       this.multipleSelection = val
       console.log('Time:07-02 multipleSelection', this.multipleSelection)
     },
+    // 弹框
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    },
+    // 弹框后
+    open() {
+      this.$nextTick(function() {
+      //  执行echarts方法
+        console.log('Time:07-03 initnewchart')
+        this.initChart()
+      })
+    },
     // 修改table header的背景颜色
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
@@ -906,20 +977,20 @@ export default {
     },
     // 修改cell的背景颜色
     addClass({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex >= 0 && columnIndex <= 3) {
+      if (columnIndex >= 0 && columnIndex <= 4) {
         return 'padding:0px;'
       }
-      if (columnIndex === 44 || columnIndex === 45 || columnIndex === 46) {
+      if (columnIndex === 45 || columnIndex === 46 || columnIndex === 47) {
         return 'padding:0px;'
       }
-      if (columnIndex === 4) {
+      if (columnIndex === 5) {
         if (row.tag !== row.lat_tag) {
           return 'background-color: red; padding:0px; color: white'
         } else {
           return 'padding:0px; color: black'
         }
       }
-      if (columnIndex === 5) {
+      if (columnIndex === 6) {
         if (row.filelist_dup === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.filelist_dup <= 10) {
@@ -932,7 +1003,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 6) {
+      if (columnIndex === 7) {
         if (row.filelist_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.filelist_p0 <= 10) {
@@ -945,7 +1016,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 7) {
+      if (columnIndex === 8) {
         if (row.filelist_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.filelist_p1 <= 10) {
@@ -958,7 +1029,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 8) {
+      if (columnIndex === 9) {
         if (row.ius_error === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.ius_error <= 10) {
@@ -971,7 +1042,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 9) {
+      if (columnIndex === 10) {
         if (row.define_chk_red === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.define_chk_red <= 10) {
@@ -984,7 +1055,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 10) {
+      if (columnIndex === 11) {
         if (row.define_chk_gro === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.define_chk_gro <= 10) {
@@ -997,7 +1068,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 11) {
+      if (columnIndex === 12) {
         if (row.define_chk_lat === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.define_chk_lat <= 10) {
@@ -1010,7 +1081,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 12) {
+      if (columnIndex === 13) {
         if (row.params_chk_fat === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.params_chk_fat <= 10) {
@@ -1023,7 +1094,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 13) {
+      if (columnIndex === 14) {
         if (row.params_chk_err === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.params_chk_err <= 10) {
@@ -1036,7 +1107,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 14) {
+      if (columnIndex === 15) {
         if (row.params_chk_war === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.params_chk_war <= 10) {
@@ -1049,7 +1120,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 15) {
+      if (columnIndex === 16) {
         if (row.spylint_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_bui <= 10) {
@@ -1062,7 +1133,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 16) {
+      if (columnIndex === 17) {
         if (row.spylint_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_p0 <= 10) {
@@ -1075,7 +1146,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 17) {
+      if (columnIndex === 18) {
         if (row.spylint_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_p1 <= 10) {
@@ -1088,7 +1159,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 18) {
+      if (columnIndex === 19) {
         if (row.spylint_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spylint_p2 <= 10) {
@@ -1101,7 +1172,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 19) {
+      if (columnIndex === 20) {
         if (row.lop_com === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.lop_com <= 10) {
@@ -1114,7 +1185,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 20) {
+      if (columnIndex === 21) {
         if (row.spysdc_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_bui <= 10) {
@@ -1127,7 +1198,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 21) {
+      if (columnIndex === 22) {
         if (row.spysdc_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_p0 <= 10) {
@@ -1140,7 +1211,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 22) {
+      if (columnIndex === 23) {
         if (row.spysdc_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_p1 <= 10) {
@@ -1153,7 +1224,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 23) {
+      if (columnIndex === 24) {
         if (row.spysdc_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_p2 <= 10) {
@@ -1166,7 +1237,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 24) {
+      if (columnIndex === 25) {
         if (row.spysdc_ucr === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_ucr <= 10) {
@@ -1179,7 +1250,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 25) {
+      if (columnIndex === 26) {
         if (row.spysdc_uci === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spysdc_uci <= 10) {
@@ -1192,7 +1263,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 26) {
+      if (columnIndex === 27) {
         if (row.spycdc_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_bui <= 10) {
@@ -1205,7 +1276,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 27) {
+      if (columnIndex === 28) {
         if (row.spycdc_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_p0 <= 10) {
@@ -1218,7 +1289,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 28) {
+      if (columnIndex === 29) {
         if (row.spycdc_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_p1 <= 10) {
@@ -1231,7 +1302,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 29) {
+      if (columnIndex === 30) {
         if (row.spycdc_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spycdc_p2 <= 10) {
@@ -1244,7 +1315,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 30) {
+      if (columnIndex === 31) {
         if (row.spydft_bui === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_bui <= 10) {
@@ -1257,7 +1328,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 31) {
+      if (columnIndex === 32) {
         if (row.spydft_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_p0 <= 10) {
@@ -1270,7 +1341,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 32) {
+      if (columnIndex === 33) {
         if (row.spydft_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_p1 <= 10) {
@@ -1283,7 +1354,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 33) {
+      if (columnIndex === 34) {
         if (row.spydft_p2 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_p2 <= 10) {
@@ -1296,7 +1367,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 34) {
+      if (columnIndex === 35) {
         if (row.spydft_fau.replace('%', '') >= 90) {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.spydft_fau.replace('%', '') < 90) {
@@ -1307,7 +1378,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 35) {
+      if (columnIndex === 36) {
         if (row.clp_p0 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.clp_p0 <= 10) {
@@ -1320,7 +1391,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 36) {
+      if (columnIndex === 37) {
         if (row.clp_p1 === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.clp_p1 <= 10) {
@@ -1333,7 +1404,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 37) {
+      if (columnIndex === 38) {
         if (row.etc_err === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.etc_err <= 10) {
@@ -1346,7 +1417,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 38) {
+      if (columnIndex === 39) {
         if (row.etc_war === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.etc_war <= 10) {
@@ -1359,7 +1430,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 39) {
+      if (columnIndex === 40) {
         if (row.erc_cod === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.erc_cod <= 10) {
@@ -1372,7 +1443,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 40) {
+      if (columnIndex === 41) {
         if (row.erc_doc === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.erc_doc <= 10) {
@@ -1385,7 +1456,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 41) {
+      if (columnIndex === 42) {
         if (row.mtbf_dat === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.mtbf_dat <= 10) {
@@ -1398,7 +1469,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 42) {
+      if (columnIndex === 43) {
         if (row.mtbf_res === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.mtbf_res <= 10) {
@@ -1411,7 +1482,7 @@ export default {
           return 'background-color: gray; padding:0px; color: white'
         }
       }
-      if (columnIndex === 43) {
+      if (columnIndex === 44) {
         if (row.mtbf_pos === '0') {
           return 'background-color: green; padding:0px; color: white'
         } else if (row.mtbf_pos <= 10) {
