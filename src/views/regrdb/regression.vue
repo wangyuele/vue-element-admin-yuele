@@ -22,16 +22,17 @@
       </el-button>
 
       <el-dialog
-        title="Lint Chart"
+        title="Chart"
         :visible.sync="dialogVisible"
         width="60%"
+        top="10vh"
         :before-close="handleClose"
         append-to-body
         center
         @open="open()"
-        @change_chart="change_chart()"
+        @change="change_chart()"
       >
-        <el-select v-model="value" placeholder="请选择" @change_chart="change_chart()">
+        <el-select v-model="value" placeholder="请选择" @change="change_chart(value)">
           <el-option
             v-for="item in check_item"
             :key="item.value"
@@ -39,10 +40,16 @@
             :value="item.value"
           />
         </el-select>
-        <el-form :inline="true" size="max" label-width="80px">
-          <el-row :gutter="10">
+        <el-form :inline="true" size="max" label-width="100px">
+          <el-row :gutter="180">
             <el-col :xs="500" :sm="500" :md="500" :lg="500">
-              <el-form-item label="Lint Chart">
+              <el-form-item v-if="ShownLINT" label="Lint Chart">
+                <div :id="id" :class="className" :style="{height:height,width:width}" />
+              </el-form-item>
+              <el-form-item v-if="ShownCDC" label="CDC Chart">
+                <div :id="id" :class="className" :style="{height:height,width:width}" />
+              </el-form-item>
+              <el-form-item v-if="ShownDFT" label="DFT Chart">
                 <div :id="id" :class="className" :style="{height:height,width:width}" />
               </el-form-item>
             </el-col>
@@ -366,6 +373,18 @@ const _data = [
   { 'Time Serie': '2020-06-07', 'ap_sys': '19', 'wcn_sys': '11', 'aud_cp_sys': '35', 'gpu_sys': '50', 'mm__sys': '80', 'wtl_cp_sys': '86', 'pub_sys': '140', 'top': '360' },
   { 'Time Serie': '2020-06-08', 'ap_sys': '30', 'wcn_sys': '10', 'aud_cp_sys': '36', 'gpu_sys': '56', 'mm__sys': '85', 'wtl_cp_sys': '87', 'pub_sys': '135', 'top': '370' },
   { 'Time Serie': '2020-06-09', 'ap_sys': '40', 'wcn_sys': '17', 'aud_cp_sys': '37', 'gpu_sys': '70', 'mm__sys': '90', 'wtl_cp_sys': '88', 'pub_sys': '120', 'top': '380' }
+]
+// cdc test data
+const _data1 = [
+  { 'Time Serie': '2020-07-01', 'ap_sys': '10', 'wcn_sys': '15', 'aud_cp_sys': '36', 'gpu_sys': '41', 'mm__sys': '62', 'wtl_cp_sys': '80', 'pub_sys': '190', 'top': '300' },
+  { 'Time Serie': '2020-07-02', 'ap_sys': '20', 'wcn_sys': '16', 'aud_cp_sys': '30', 'gpu_sys': '42', 'mm__sys': '65', 'wtl_cp_sys': '81', 'pub_sys': '180', 'top': '310' },
+  { 'Time Serie': '2020-07-03', 'ap_sys': '10', 'wcn_sys': '17', 'aud_cp_sys': '31', 'gpu_sys': '43', 'mm__sys': '66', 'wtl_cp_sys': '82', 'pub_sys': '170', 'top': '320' },
+  { 'Time Serie': '2020-07-04', 'ap_sys': '14', 'wcn_sys': '18', 'aud_cp_sys': '32', 'gpu_sys': '45', 'mm__sys': '67', 'wtl_cp_sys': '83', 'pub_sys': '160', 'top': '330' },
+  { 'Time Serie': '2020-07-05', 'ap_sys': '16', 'wcn_sys': '19', 'aud_cp_sys': '33', 'gpu_sys': '47', 'mm__sys': '70', 'wtl_cp_sys': '84', 'pub_sys': '150', 'top': '340' },
+  { 'Time Serie': '2020-07-06', 'ap_sys': '18', 'wcn_sys': '12', 'aud_cp_sys': '34', 'gpu_sys': '49', 'mm__sys': '78', 'wtl_cp_sys': '85', 'pub_sys': '140', 'top': '350' },
+  { 'Time Serie': '2020-07-07', 'ap_sys': '19', 'wcn_sys': '11', 'aud_cp_sys': '35', 'gpu_sys': '50', 'mm__sys': '80', 'wtl_cp_sys': '86', 'pub_sys': '140', 'top': '360' },
+  { 'Time Serie': '2020-07-08', 'ap_sys': '30', 'wcn_sys': '10', 'aud_cp_sys': '36', 'gpu_sys': '56', 'mm__sys': '85', 'wtl_cp_sys': '87', 'pub_sys': '135', 'top': '370' },
+  { 'Time Serie': '2020-07-09', 'ap_sys': '40', 'wcn_sys': '17', 'aud_cp_sys': '37', 'gpu_sys': '70', 'mm__sys': '90', 'wtl_cp_sys': '88', 'pub_sys': '120', 'top': '380' }
 ]
 
 const sysMap = {
@@ -735,6 +754,10 @@ export default {
         value: 'dft_data',
         label: 'DFT'
       }],
+      ShownLINT: true,
+      ShownCDC: false,
+      ShownDFT: false,
+      chart_type: 'LINT',
       multipleSelection: []
     }
   },
@@ -743,7 +766,7 @@ export default {
   },
   mounted() {
     this.$nextTick(function() {
-      this.initChart()
+      this.initChart(this.chart_type)
     })
   },
   methods: {
@@ -759,23 +782,52 @@ export default {
         }, 1.5 * 1000)
       })
     },
-    initChart() {
+    initChart(chart_type) {
+      console.log('Time:07-06 chart_type >>>', chart_type, _data1)
       updateLegend()
       console.log('Time:07-03 Legend flag2', legendData)
       chart = echarts.init(document.getElementById(this.id))
       // setOption
-      chart.setOption({
-        backgroundColor: '#344b58',
-        title: option.title,
-        tooltip: option.tooltip,
-        grid: option.grid,
-        legend: option.legend,
-        calculable: true,
-        xAxis: option.xAxis,
-        yAxis: option.yAxis,
-        dataZoom: option.dataZoom,
-        series: option.series
-      })
+      if (chart_type === 'LINT') {
+        chart.setOption({
+          backgroundColor: '#344b58',
+          title: option.title,
+          tooltip: option.tooltip,
+          grid: option.grid,
+          legend: option.legend,
+          calculable: true,
+          xAxis: option.xAxis,
+          yAxis: option.yAxis,
+          dataZoom: option.dataZoom,
+          series: option.series
+        })
+      } else if (chart_type === 'CDC') {
+        chart.setOption({
+          backgroundColor: '#344b58',
+          title: option.title,
+          tooltip: option.tooltip,
+          grid: option.grid,
+          legend: option.legend,
+          calculable: true,
+          xAxis: option.xAxis,
+          yAxis: option.yAxis,
+          dataZoom: option.dataZoom,
+          series: option.series
+        })
+      } else {
+        chart.setOption({
+          backgroundColor: '#344b58',
+          title: option.title,
+          tooltip: option.tooltip,
+          grid: option.grid,
+          legend: option.legend,
+          calculable: true,
+          xAxis: option.xAxis,
+          yAxis: option.yAxis,
+          dataZoom: option.dataZoom,
+          series: option.series
+        })
+      }
       // dynamic the legend
       chart.on('datazoom', function(params) {
         console.log('Time:06-30 params', params, chart)
@@ -963,8 +1015,42 @@ export default {
       this.$nextTick(function() {
       //  执行echarts方法
         console.log('Time:07-03 initnewchart')
-        this.initChart()
+        this.initChart(this.chart_type)
       })
+    },
+    // chart change
+    change_chart(item) {
+      if (item === 'lint_data') {
+        this.ShownLINT = true
+        this.ShownCDC = false
+        this.ShownDFT = false
+        console.log('Time:07-06 LINTnewchart')
+        this.$nextTick(function() {
+          // 执行echarts方法
+          console.log('Time:07-06 initnewchart')
+          this.initChart('LINT')
+        })
+      } else if (item === 'cdc_data') {
+        this.ShownLINT = false
+        this.ShownCDC = true
+        this.ShownDFT = false
+        console.log('Time:07-06 CDCnewchart')
+        this.$nextTick(function() {
+          // 执行echarts方法
+          console.log('Time:07-06 initnewchart')
+          this.initChart('CDC')
+        })
+      } else {
+        this.ShownLINT = false
+        this.ShownCDC = false
+        this.ShownDFT = true
+        console.log('Time:07-06 CDCnewchart')
+        this.$nextTick(function() {
+          // 执行echarts方法
+          console.log('Time:07-06 initnewchart')
+          this.initChart('DFT')
+        })
+      }
     },
     // 修改table header的背景颜色
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
